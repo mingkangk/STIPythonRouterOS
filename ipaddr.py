@@ -148,11 +148,7 @@ class ApiRos:
 			b = letters;
 
 	counts = b[5]
-	number = int(counts)
-	if (isinstance(number,int)):
-		return number
-	else:
-		return b
+	return counts
     
     def createip(self, ip, interface):
 	self.inputSentence = ['/ip/address/add']
@@ -207,7 +203,8 @@ def main():
 	
 	if (ans2 == "1"):
 		count = apiros.printipcount()
-		if (isinstance(count, int)):
+		if (isinstance(int(count), int)):
+			count = int(count)
 			count = count+2
 			while count != 0:
 			
