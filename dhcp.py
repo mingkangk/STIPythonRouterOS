@@ -137,18 +137,44 @@ class ApiRos:
     def get_num(x):
 	return int (''.join(ele for ele in x if ele.isdigit()))
 
-    def printdhcpcount(self):
-	global b
-	self.inputSentence = ['/ip/dhcp-server/print']
+    def printpoolcount(self):
+	global e
+	self.inputSentence = ['/ip/pool/print']
 	self.inputSentence.append('=count-only=')
 	self.writeSentence(self.inputSentence)
 	count = self.readSentence()
 	for letters in count:
 		if "=ret=" in letters:
-			b = letters;
+			e = letters;
 
-	counts = b[5]
+	counts = e[5]
 	return counts
+
+    def printnetworkcount(self):
+        global f
+        self.inputSentence = ['/ip/dhcp-server/network/print']
+        self.inputSentence.append('=count-only=')
+        self.writeSentence(self.inputSentence)
+        count = self.readSentence()
+        for letters in count:
+                if "=ret=" in letters:
+                        f = letters;
+
+        counts = f[5]
+        return counts
+
+    def printservercount(self):
+        global g
+        self.inputSentence = ['/ip/dhcp-server/print']
+        self.inputSentence.append('=count-only=')
+        self.writeSentence(self.inputSentence)
+        count = self.readSentence()
+        for letters in count:
+                if "=ret=" in letters:
+                        g = letters;
+
+        counts = g[5]
+        return counts
 
     def addpool(self):
 	name = raw_input('Pool Name: ')
@@ -240,12 +266,25 @@ class ApiRos:
     def updatenetwork(self):
 	address = raw_input('Network Address: ')
 	gateway = raw_input('Gateway: ')
-	dns = raw_input('DNS Address: ')
+	number = raw_input('Number: ')
 
-	self.inputSentence = ['/ip/dhcp-server/network']
+	self.inputSentence = ['/ip/dhcp-server/network/set']
 	self.inputSentence.append('=address='+ address)
 	self.inputSentence.append('=gateway='+ gateway)
-	self.inputSentence.append('=dns='+ dns)
+	self.inputSentence.append('=numbers='+ number)
+	self.writeSentence(self.inputSentence)
+	self.readSentence()
+
+    def updateserver(self):
+
+	address = raw_input('Server IP: ')
+	number = raw_input('Number: ')
+
+	self.inputSentence = ['/ip/dhcp-server/set']
+	self.inputSentence.append('=src-address='+ address)
+	self.inputSentence.append('=numbers='+ number)
+	self.writeSentence(self.inputSentence)
+	self.readSentence()
 
     def updateDHCP(self):
 	reply="no"
@@ -314,7 +353,6 @@ def main():
     apiros.login("admin", "");
 
     ans = "yes"
-    counts = apiros.printdhcpcount()
 
     while (ans == "yes"):
 	
@@ -327,38 +365,95 @@ def main():
 	
 	
 	if (ans2 == "1"):
-		count = apiros.printdhcpcount()
-		if (isinstance(int(count), int)):
-			count = int(count)
-			count = count+2
-			while count != 0:
+		print '1. Print DHCP Pools'
+		print '2. Print DHCP Network'
+		print '3. Print DHCP Servers'
+		print '4. Quit'
+
+		ans3 = raw_input('Task: ')
+
+		if (ans3 == "1"):
+
+			count = apiros.printpoolcount()
+			if (isinstance(int(count), int)):
+				count = int(count)
+				count = count+2
+				while count != 0:
 			
-				inputsentence = ['/ip/dhcp-server/print'];
-				r = select.select([s, sys.stdin], [], [], None)
-				if s in r[0]:
-					x = apiros.readSentence()
+					inputsentence = ['/ip/pool/print'];
+					r = select.select([s, sys.stdin], [], [], None)
+					if s in r[0]:
+						x = apiros.readSentence()
 
-				if sys.stdin in r[0]:
-					l = sys.stdin.readline()
-					l = l[:-1]
-					if l == '':
-						apiros.writeSentence(inputsentence)
-						inputsentence = []
-					else:
-						inputsentence.append(l)
-				count = count-1;
-		else:
-			print "not integer"
+					if sys.stdin in r[0]:
+						l = sys.stdin.readline()
+						l = l[:-1]
+						if l == '':
+							apiros.writeSentence(inputsentence)
+							inputsentence = []
+						else:
+							inputsentence.append(l)
+					count = count-1;
+			else:
+				print "not integer"
 
-        elif (ans2 == "2"):
+		elif(ans3 == "2"):
+			count = apiros.printnetworkcount()
+                        if (isinstance(int(count), int)):
+                                count = int(count)
+                                count = count+2
+                                while count != 0:
+
+            	                    inputsentence = ['/ip/dhcp-server/network/print']
+                                    r = select.select([s, sys.stdin], [], [], None)
+                                    if s in r[0]:
+   	                                 x = apiros.readSentence()
+
+                                    if sys.stdin in r[0]:
+                                         l = sys.stdin.readline()
+                                         l = l[:-1]
+					 if l == '':
+                 	                        apiros.writeSentence(inputsentence)
+                                                inputsentence = []
+                                         else:
+                                                inputsentence.append(l)
+                                    count = count-1;
+			else:
+
+				print "Not Integer"
+
+		elif(ans3 == "3"):
+                        count = apiros.printservercount()
+                        if (isinstance(int(count), int)):
+                                count = int(count)
+                                count = count+2
+                                while count != 0:
+
+                       	        	 inputsentence = ['/ip/dhcp-server/print']
+                                         r = select.select([s, sys.stdin], [], [], None)
+                                         if s in r[0]:
+                   	                      x = apiros.readSentence()
+
+                                         if sys.stdin in r[0]:
+                                              l = sys.stdin.readline()
+                                              l = l[:-1]
+                                              if l == '':
+                    	                          apiros.writeSentence(inputsentence)
+                                                  inputsentence = []
+                                              else:
+                                  	          inputsentence.append(l)
+                                 	 count = count-1;
+
+                        else:
+                                print "not integer"
+
+      	elif (ans2 == "2"):
 		 	
     		apiros.addDHCP();
 
 	elif (ans2 == "3"):
 
-    		apiros.updateip();
-
-    		apiros.emptyline();
+    		apiros.updateDHCP();
 	
 	elif (ans2 == "4"):
 
