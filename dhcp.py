@@ -150,7 +150,7 @@ class ApiRos:
 			self.writeSentence(self.inputSentence)
 			self.readSentence()
 
-			number = number+4
+			number = number+1
 	else:
 		print "not integer"
 
